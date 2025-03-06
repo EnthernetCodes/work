@@ -68,7 +68,7 @@ kill_pid() {
         killall "$process" > /dev/null 2>&1
         success "Stopped running PHP processes."
     else
-        log "No PHP processes found."
+        echo -e "No PHP processes found."
     fi
 }
 
@@ -77,22 +77,14 @@ setup_site() {
     clear
     banner
     cd work || { error "Failed to enter work directory."; exit 1; }
-
     git pull
-    log "Updating repository..."
-
-    cp -rf .sites/* .server/www
-    cp -f .sites/ip.php .server/www/
-
     echo -e "${YELLOW}Enter Port Number to Host On:${RESET}"
     read -r PORT
-
     if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
         error "Invalid port number. Please enter a number."
         return
     fi
-
-    log "Starting PHP server on port $PORT..."
+    echo -e "Starting PHP server on port $PORT..."
     php -S "$HOST":"$PORT" &>/dev/null &
     success "Server started at http://$HOST:$PORT"
 }
