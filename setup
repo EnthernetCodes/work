@@ -1,3 +1,4 @@
+chmod +x hosts
 mv host.sh.x.c hosts /data/data/com.termux/files/usr/bin
 cd
 hosts
