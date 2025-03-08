@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/data/data/com.termux/files/usr/bin/bash
 
 # Your Railway app URL
 SERVER_URL="https://worker-production-00bb.up.railway.app/register"
