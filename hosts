@@ -76,7 +76,7 @@ kill_pid() {
 setup_site() {
     clear
     banner
-    cd work || { error "Failed to enter work directory."; exit 1; }
+    cd work
     git pull
     echo -e "${YELLOW}Enter Port Number to Host On:${RESET}"
     read -r PORT
