@@ -111,8 +111,18 @@ capture_data() {
 }
 
 # --- HOST SERVER PUBLICLY ---
+# --- HOST SERVER PUBLICLY ---
 host_server() {
-    ssh -R 80:localhost:$PORT serveo.net
+    if [ -z "$PORT" ]; then
+        echo "PORT is not set. Please export PORT=<your_port> and try again."
+        return 1
+    fi
+
+    echo "Hosting on Serveo..."
+    ssh -R 80:localhost:$PORT serveo.net || {
+        echo "Serveo failed. Trying localhost.run..."
+        ssh -R 80:localhost:$PORT nokey@localhost.run
+    }
 }
 
 # --- INSTALL REQUIRED DEPENDENCIES ---
